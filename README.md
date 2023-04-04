@@ -1,6 +1,6 @@
-# TensorFlow for Home Assistant
+# protobuf for Home Assistant
 
-Build wheels for TensorFlow and Home Assistant.
+Build wheels for protobuf and Home Assistant.
 
 ## Manually building
 
