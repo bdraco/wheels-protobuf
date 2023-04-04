@@ -3,6 +3,7 @@ FROM $BUILD_FROM
 
 ARG BUILD_ARCH
 ARG BAZEL_VERSION=6.0.0
+ARG AUDITWHEEL_VERSION=5.1.2
 ARG WHEEL_LINKS=https://wheels.home-assistant.io/musllinux/
 
 WORKDIR /usr/src
@@ -58,3 +59,14 @@ RUN cd /usr/src \
     && cp -p output/bazel /usr/bin/
     
 RUN bazel build @upb//python/dist:binary_wheel
+
+# Install auditwheel
+COPY 0001-Support-musllinux-armv6l.patch /usr/src/
+RUN \
+    set -x \
+    && git clone --depth 1 -b ${AUDITWHEEL_VERSION} \
+        https://github.com/pypa/auditwheel \
+    && cd auditwheel \
+    && git apply /usr/src/0001-Support-musllinux-armv6l.patch \
+    && pip install --no-cache-dir . \
+    && rm -rf /usr/src/*
