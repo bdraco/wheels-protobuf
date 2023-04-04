@@ -79,11 +79,11 @@ COPY *.patch ./
 RUN cd /usr/src \
     && pip3 install --no-cache-dir \
         --no-deps keras_applications==1.0.6 keras_preprocessing==1.0.5 \
-    && git clone -b v${TENSORFLOW_VERSION} --depth 1 https://github.com/tensorflow/tensorflow \
+    && git clone -b v${TENSORFLOW_VERSION} --depth 1 https://github.com/protobuf/protobuf \
     && for i in /usr/src/*.patch; do \
-        patch -d /usr/src/tensorflow -p 1 < "${i}"; done
+        patch -d /usr/src/protobuf -p 1 < "${i}"; done
 
-RUN cd /usr/src/tensorflow \
+RUN cd /usr/src/protobuf \
     && sed -i -e '/HAVE_MALLINFO/d' third_party/llvm/llvm.bzl \
     && PYTHON_BIN_PATH=/usr/local/bin/python3 PYTHON_LIB_PATH=/usr/local/lib/python3.8/site-packages \
         CC_OPT_FLAGS="-mtune=generic" TF_NEED_JEMALLOC=1 TF_CUDA_CLANG=0 TF_NEED_GCP=0 TF_NEED_HDFS=0 \
@@ -95,24 +95,24 @@ RUN cd /usr/src/tensorflow \
         --cxxopt="-D_GLIBCXX_USE_CXX11_ABI=0" \
         --linkopt=-lexecinfo --host_linkopt=-lexecinfo \
         --noincompatible_strict_action_env \
-        //tensorflow/tools/pip_package:build_pip_package
+        //protobuf/tools/pip_package:build_pip_package
 
-RUN cd /usr/src/tensorflow \
-    && ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /usr/src/wheels 
+RUN cd /usr/src/protobuf \
+    && ./bazel-bin/protobuf/tools/pip_package/build_pip_package /usr/src/wheels 
 
 RUN cd /usr/src/wheels \
     && pip3 wheel \
         --wheel-dir /usr/src/wheels/ \
         --find-links "https://wheels.home-assistant.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
-        tensorflow-${TENSORFLOW_VERSION}-*.whl
+        protobuf-${TENSORFLOW_VERSION}-*.whl
 
 RUN cd /usr/src/wheels \
     && pip3 install \
         --find-links "https://wheels.home-assistant.io/alpine-$(cut -d '.' -f 1-2 < /etc/alpine-release)/${BUILD_ARCH}/" \
-        tensorflow-${TENSORFLOW_VERSION}-*.whl
+        protobuf-${TENSORFLOW_VERSION}-*.whl
 
 RUN cd /usr/src \
-    && git clone -b v${TENSORFLOW_ADDONS_VERSION} --depth 1 https://github.com/tensorflow/addons
+    && git clone -b v${TENSORFLOW_ADDONS_VERSION} --depth 1 https://github.com/protobuf/addons
 
 RUN cd /usr/src/addons \
     && python3 ./configure.py \
