@@ -9,7 +9,7 @@ A manual build can take a long time (4-5 hours or longer is normal).
 To manually build the wheels using this Docker image:
 
 ```bash
-docker build  --build-arg BUILD_FROM=homeassistant/amd64-base-python:3.8-alpine3.12 --build-arg BUILD_ARCH=amd64 --tag protobuf:amd64 .
+docker build  --build-arg BUILD_FROM=home-assistant/wheels/amd64/musllinux_1_2/cp310:2022.10.1 --build-arg BUILD_ARCH=amd64 --tag protobuf:amd64 .
 ```
 
 If the build was successful, the wheel files can be extracted from the resulting
